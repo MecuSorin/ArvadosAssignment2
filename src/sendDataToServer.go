@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
+	"os"
 	"sync"
 	"time"
 )
@@ -14,6 +16,8 @@ var (
 
 	initiateContextForPacket = defaultInitiateContextForPacket
 	timeoutDurationForPOST   = defaultTimeoutDurationForPOST
+
+	maximum_blob_size = 32000
 )
 
 type packetToDeliver struct {
@@ -26,6 +30,18 @@ type packetToDeliver struct {
 func sendDataToServer(packet packetToDeliver) error {
 	postChannel := make(chan error, 1)
 	go func() {
+		if nil == packet.dataToPOST {
+			reader, err := os.Open(packet.filePath)
+			if nil != err {
+				packet.dataToPOST, err = getBlob(rand.Intn(maximum_blob_size))
+				if nil != err {
+					postChannel <- err
+					return
+				}
+			}
+			defer reader.Close()
+			packet.dataToPOST = reader
+		}
 		resp, err := http.Post(packet.url, "application/octet-stream", packet.dataToPOST)
 		if nil != err {
 			postChannel <- err

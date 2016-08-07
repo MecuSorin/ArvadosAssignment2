@@ -18,3 +18,15 @@ Continue until two different servers have reported success.
 To test your client, write a stub server that accepts data, 
 discards the data,
  and reports HTTP 200, say, 30% of the time, and only after a variable delay.
+ 
+# Build
+Use 'go get' and 'go build' to add the required libraries and create the executable
+ 
+# Usage
+ArvadosAssignment2 --help will provide the actualized flags
+
+'ArvadosAssignment2 -stubPercent 30 -stub true'
+will start as a stub server and will add in servers.json current instance
+
+'ArvadosAsignment2'
+will try to send the data to the instances from servers.json list
