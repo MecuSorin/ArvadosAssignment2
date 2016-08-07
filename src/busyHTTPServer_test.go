@@ -8,7 +8,12 @@ import (
 )
 
 var _ = Describe("busyHTTPServer stub ", func() {
-
+	BeforeEach(func() {
+		logDataHandled = func(int) {}
+	})
+	AfterEach(func() {
+		logDataHandled = defaultLogDataHandled
+	})
 	Specify("Should wait a random time on each request/response", func() {
 		delayerDone := make(chan bool)
 		delayer = func(time.Duration) {

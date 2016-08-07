@@ -11,9 +11,12 @@ import (
 type busyStatusServerHandler int
 
 var (
+	defaultLogDataHandled = func(status int) {
+		fmt.Printf("Received request,  responded with %d \n", status)
+	}
 	delayer = time.Sleep
 
-
+	logDataHandled       = defaultLogDataHandled
 	delayerSleepDuration = time.Duration(5 * time.Second)
 )
 
@@ -33,7 +36,7 @@ func (responseStatus *busyStatusServerHandler) ServeHTTP(w http.ResponseWriter, 
 
 // getRandomChanceOfSuccess provides a random boolean based on responseStatus percent chance
 func (responseStatus *busyStatusServerHandler) getRandomChanceOfSuccess() bool {
-	return rand.Intn(100) < int(*responseStatus)
+	return rand.Intn(100) < min(100, max(0, int(*responseStatus)))
 }
 
 func max(a, b int) int {
